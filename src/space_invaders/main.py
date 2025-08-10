@@ -1,8 +1,8 @@
 import pygame
 import sys
-from player import Player
-from bullet import Bullet
-from alien import Alien
+from .player import Player
+from .bullet import Bullet
+from .alien import Alien
 
 def create_fleet(screen_width, all_sprites, aliens):
     alien_width = 40
@@ -50,7 +50,7 @@ def main():
 
     # Game loop
     running = True
-    clock = pygame.time.Clock() # To control frame rate
+    clock = pygame.time.Clock()
 
     while running:
         # Keep loop running at the right speed
@@ -98,4 +98,12 @@ def main():
     sys.exit()
 
 if __name__ == "__main__":
-    main()
+    # To run the game directly, you would need to handle the package structure.
+    # For example, run as a module: python -m src.space_invaders.main
+    # For simplicity, we'll assume it's run as part of a larger application.
+    # A simple way to make it runnable is to add the src directory to the path.
+    import os
+    # This is a bit of a hack for direct execution.
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+    from src.space_invaders.main import main as main_game
+    main_game()

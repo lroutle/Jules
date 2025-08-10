@@ -1,5 +1,5 @@
 import pygame
-from bullet import Bullet
+from .bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
@@ -29,4 +29,6 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx, self.rect.top)
+        bullet.rect.centerx = self.rect.centerx
+        bullet.rect.bottom = self.rect.top
         return bullet
