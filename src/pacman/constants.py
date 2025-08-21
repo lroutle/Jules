@@ -1,0 +1,31 @@
+# Constants for Pac-Man
+
+# Screen dimensions
+SCREEN_WIDTH = 560
+SCREEN_HEIGHT = 620
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
+# Colors
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+PINK = (255, 184, 222)
+CYAN = (0, 255, 255)
+ORANGE = (255, 184, 82)
+
+# Game states
+START = 0
+PLAYING = 1
+GAMEOVER = 2
+WINNER = 3
+
+# Frame rate
+FPS = 60
+
+# Maze dimensions
+MAZE_WIDTH = 28
+MAZE_HEIGHT = 31
+TILE_WIDTH = SCREEN_WIDTH // MAZE_WIDTH
+TILE_HEIGHT = SCREEN_HEIGHT // MAZE_HEIGHT
