@@ -3,13 +3,22 @@ from ursina.prefabs.first_person_controller import FirstPersonController
 
 app = Ursina()
 
-# Create a ground plane
-ground = Entity(model='plane', scale=(100, 1, 100), color=color.lime, texture='white_cube', texture_scale=(100,100), collider='box')
+class Block(Button):
+    def __init__(self, position=(0,0,0)):
+        super().__init__(
+            parent = scene,
+            position = position,
+            model = 'cube',
+            origin_y = 0.5,
+            texture = 'grass',
+            color = color.color(0,0,random.uniform(0.9,1.0)),
+            highlight_color = color.lime,
+        )
 
-# Create a cube
-cube = Entity(model='cube', color=color.orange, scale=(2,2,2), position=(5, 1, 5), collider='box')
+for z in range(20):
+    for x in range(20):
+        block = Block(position=(x,0,z))
 
-# Add a first person controller
 player = FirstPersonController(y=2, origin_y=-.5)
 
 app.run()
