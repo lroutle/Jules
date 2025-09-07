@@ -11,7 +11,7 @@ class Block(Button):
             model = 'cube',
             origin_y = 0.5,
             texture = 'grass',
-            color = color.Color(0,0,random.uniform(0.9,1.0)),
+            color = color.hsv(0,0,random.uniform(0.9,1.0)),
             highlight_color = color.lime,
         )
 
