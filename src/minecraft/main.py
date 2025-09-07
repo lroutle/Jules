@@ -1,7 +1,7 @@
 import pygame
 import sys
-from .block import Block
-from .player import Player
+from block import Block
+from player import Player
 
 def main():
     pygame.init()
@@ -78,8 +78,4 @@ def main():
     sys.exit()
 
 if __name__ == "__main__":
-    # This is a bit of a hack for direct execution.
-    import os
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-    from src.minecraft.main import main as main_game
-    main_game()
+    main()
