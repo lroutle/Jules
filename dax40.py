@@ -51,59 +51,73 @@ def compute_performance(hist):
     p5 = perf(DateOffset(years=5)) if len(adj) > 250*5 else "N/A"
     return p6, p12, p5
 
-results = []
+def get_dax40_data(tickers):
+    results = []
 
-for ticker, company in dax40:
-    stock = yf.Ticker(ticker)
+    for ticker, company in tickers:
+        stock = yf.Ticker(ticker)
 
-    # Current price
-    try:
-        last_day = stock.history(period="1d", auto_adjust=True)
-        if not last_day.empty:
-            price = round(float(last_day["Close"].iloc[-1]), 2)
-        else:
-            price = stock.info.get("currentPrice") or stock.info.get("regularMarketPrice") or "N/A"
-    except Exception:
-        price = "N/A"
+        # Current price
+        try:
+            last_day = stock.history(period="1d", auto_adjust=True)
+            if not last_day.empty:
+                price = round(float(last_day["Close"].iloc[-1]), 2)
+            else:
+                price = stock.info.get("currentPrice") or stock.info.get("regularMarketPrice") or "N/A"
+        except Exception:
+            price = "N/A"
 
-    # Performance
-    try:
-        hist = stock.history(period="max", auto_adjust=True)
-        perf_6m, perf_12m, perf_5y = compute_performance(hist)
-    except Exception:
-        perf_6m = perf_12m = perf_5y = "N/A"
+        # Performance
+        try:
+            hist = stock.history(period="max", auto_adjust=True)
+            perf_6m, perf_12m, perf_5y = compute_performance(hist)
+        except Exception:
+            perf_6m = perf_12m = perf_5y = "N/A"
 
-    # Analyst recommendations
-    strong_buy = buy = hold = sell = strong_sell = total = 0
-    pct = "N/A"
-    classification = "No Data"
-    try:
-        recs = stock.recommendations_summary
-        if recs is not None and not recs.empty:
-            latest = recs.iloc[0]
-            strong_buy = int(latest.get("strongBuy", 0) or 0)
-            buy = int(latest.get("buy", 0) or 0)
-            hold = int(latest.get("hold", 0) or 0)
-            sell = int(latest.get("sell", 0) or 0)
-            strong_sell = int(latest.get("strongSell", 0) or 0)
-            total = strong_buy + buy + hold + sell + strong_sell
-            if total > 0:
-                pct = round((strong_buy + buy) / total * 100, 2)
-                classification = "Strong Buy" if pct >= 60 else "Buy" if pct >= 40 else "Hold"
-    except Exception:
-        pass
+        # Analyst recommendations
+        strong_buy = buy = hold = sell = strong_sell = total = 0
+        pct = "N/A"
+        classification = "No Data"
+        try:
+            recs = stock.recommendations_summary
+            if recs is not None and not recs.empty:
+                latest = recs.iloc[0]
+                strong_buy = int(latest.get("strongBuy", 0) or 0)
+                buy = int(latest.get("buy", 0) or 0)
+                hold = int(latest.get("hold", 0) or 0)
+                sell = int(latest.get("sell", 0) or 0)
+                strong_sell = int(latest.get("strongSell", 0) or 0)
+                total = strong_buy + buy + hold + sell + strong_sell
+                if total > 0:
+                    buy_pct = (strong_buy + buy) / total * 100
+                    sell_pct = (strong_sell + sell) / total * 100
+                    if buy_pct >= 60:
+                        classification = "Strong Buy"
+                    elif buy_pct >= 40:
+                        classification = "Buy"
+                    elif sell_pct >= 60:
+                        classification = "Strong Sell"
+                    elif sell_pct >= 40:
+                        classification = "Sell"
+                    else:
+                        classification = "Hold"
+                    pct = round(buy_pct, 2)
+        except Exception:
+            pass
 
-    results.append({
-        "Ticker": ticker, "Company": company,
-        "Current Price": price,
-        "6M %": perf_6m, "12M %": perf_12m, "5Y %": perf_5y,
-        "Strong Buy": strong_buy, "Buy": buy, "Hold": hold,
-        "Sell": sell, "Strong Sell": strong_sell,
-        "Total Analysts": total,
-        "Buy+StrongBuy %": pct,
-        "Classification": classification
-    })
+        results.append({
+            "Ticker": ticker, "Company": company,
+            "Current Price": price,
+            "6M %": perf_6m, "12M %": perf_12m, "5Y %": perf_5y,
+            "Strong Buy": strong_buy, "Buy": buy, "Hold": hold,
+            "Sell": sell, "Strong Sell": strong_sell,
+            "Total Analysts": total,
+            "Buy+StrongBuy %": pct,
+            "Classification": classification
+        })
+    return pd.DataFrame(results)
 
-df = pd.DataFrame(results)
-df.to_csv("dax40_recommendations_with_performance.csv", index=False)
-print(df)
+if __name__ == "__main__":
+    df = get_dax40_data(dax40)
+    df.to_csv("dax40_recommendations_with_performance.csv", index=False)
+    print(df)
